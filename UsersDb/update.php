@@ -1,8 +1,8 @@
 <?php
 $warnning = error_reporting(0);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 // Database Connection
 require_once 'db.php';
 $db = connect_pdo();
@@ -18,18 +18,24 @@ if ($_GET["id"]) {
     $stmt = $db->prepare("SELECT * FROM users WHERE id = :id");
     $stmt->execute([':id' => $id]);
     $user = $stmt->fetchObject();
-    var_dump($user);
+    // var_dump($user);
     $imagePath = "images/{$user->image}";
 
     if (!$user) {
         header("location:usersTable.php");
         exit;
     }
-
 }
 
 // Update User
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $id = $_POST["id"];
+    $stmt = $db->prepare("SELECT * FROM users WHERE id = :id");
+    $stmt->execute([':id' => $id]);
+    $user = $stmt->fetchObject();
+    // var_dump($user);
+    $imagePath = "images/{$user->image}";
+
     // Email RegEx
     $emailPattern = "/^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/";
 
@@ -41,12 +47,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     function validateImage()
     {
-        if ($_FILES['image']) {
+        if (!empty($_FILES['image']['name'])) {
             $allowed_extensions = array('jpg', 'jpeg', 'png', 'gif');
             $file_extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
             $file_name = $_FILES['image']['name'];
             $maxSize = 1024 * 1024 * 2;
-
             if (!in_array($file_extension, $allowed_extensions)) {
                 return false;
             }
@@ -92,7 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mail = $_POST['mail'];
         $password = $_POST['password'];
         $room = $_POST['room'];
-        $image = !empty($_FILES['image']) ? $_FILES['image']['name'] : $user->image;
+        $image = !empty($_FILES['image']['name']) ? $_FILES['image']['name'] : $user->image;
         // var_dump($_POST);
         $stmt = $db->prepare("UPDATE users SET name = :name, email = :mail, password = :password, room = :room, image = :image WHERE id = :id");
         $stmt->execute([':name' => $name, ':mail' => $mail, ':password' => $password, ':room' => $room, ':image' => $image, ':id' => $id]);
@@ -121,6 +126,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 
     <div class="container my-4">
+        <h1 class="text-center text-success">Update User</h1>
+        <hr>
         <form method="POST" action="update.php" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?php echo $user->id ?>">
             <!-- Name -->

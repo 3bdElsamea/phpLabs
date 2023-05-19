@@ -24,6 +24,8 @@ if ($_GET) {
 <body>
     <!-- Form -->
     <div class="container mt-3">
+        <h1 class="text-center text-primary"> Add New User</h1>
+        <hr>
         <form method="post" action="usersTable.php" enctype="multipart/form-data">
             <div class="mb-3">
                 <label class="form-label">Name</label>
@@ -90,7 +92,7 @@ if ($_GET) {
                 </div>
             <?php } ?>
             <div class="mb-3 text-center">
-                <button type="submit" class="btn btn-primary col-4">Submit</button>
+                <button type="submit" class="btn btn-primary col-4">Add</button>
                 <button type="reset" class="btn btn-danger col-4">Reset</button>
             </div>
         </form>
